@@ -120,6 +120,17 @@ Proof.
   apply (P X').
 Defined.
 
+Lemma isweqpr1_UU (X X' : UU) (B : X == X' -> hProp) 
+   (is1 : forall z , iscontr (B z)) : isweq (@pr1 _ B).
+Proof. 
+  intros. 
+  unfold isweq. 
+  intro y. 
+  set (isy := is1 y). 
+  apply (iscontrweqf (ezweqpr1 B y)). 
+  assumption. 
+Defined.
+
 Lemma weq2 (P : UU -> hProp) (X X' : UU) 
       (pX : P X) (pX' : P X') :
   weq (total2 (fun w : X == X' => 
