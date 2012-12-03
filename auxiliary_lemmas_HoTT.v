@@ -1,14 +1,30 @@
 
-(** ** Ahrens, Kapulkin,  December 2012 *)
+(** * [HLevel(n)] is of hlevel n+1 *)
 
+(** 
+   Authors: Benedikt Ahrens, Chris Kapulkin
+   Title: HLevel(n) is of hlevel n+1 
+   Date: December 2012 
+*)
+
+(** In this file we translate some results from the HoTT library
+    https://github.com/HoTT/HoTT
+    from the files Fibrations.v and UsefulEquivalences.v	
+    to Voevodsky's Foundations library.
+    We do not claim any originality; these lemmas were previously 
+    proved by the HoTT team.
+*)
+
+(** The main result we will use in the following is the theorem 
+    [total_paths_equiv], the last statement of this file.
+*)
 
 Require Import uu0.
 Require Import hProp.
 
+(** For convenience we use an infix notation for the path space. *)
 
 Notation "a == b" := (paths a b) (at level 70, no associativity).
-Notation "p @ q" := (pathscomp0 p q) (at level 60, right associativity).
-
 
 
 (** * Paths in total spaces are equivalent to pairs of paths *)
@@ -117,9 +133,10 @@ Proof.
   apply idpath.
 Defined.
 
-
-
-
+(** We now give the main result of this file.
+    The equivalence is established by showing that the previously 
+    defined maps are inverse to each other.
+*)
 
 Theorem total_paths_equiv (B : UU -> hProp) (x y : total2 (fun x => B x)) :
   weq (x == y) (total2 (fun p : pr1 x == pr1 y => 
