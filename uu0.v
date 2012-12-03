@@ -11,7 +11,11 @@ This file contains results which form a basis of the univalent approach and whic
 
 (** Settings *)
 
-Add Rec LoadPath "../Generalities".
+(* Ahrens, Kapulkin: we organize the few files we need in one 
+   directory, and thus don't add any paths.
+
+Add Rec LoadPath "../Generalities". 
+*)
 
 Unset Automatic Introduction. (* This line has to be removed for the file to compile with Coq8.2 *)
 

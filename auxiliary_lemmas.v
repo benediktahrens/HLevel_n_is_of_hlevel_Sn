@@ -1,13 +1,15 @@
 
-Add Rec LoadPath "../Generalities".
-Add Rec LoadPath "../hlevel1".
-Add Rec LoadPath "../hlevel2".
+(** ** Ahrens, Kapulkin,  December 2012 *)
+
 
 Require Import uu0.
 Require Import hProp.
 
-Require Import pathnotations.
-Import pathnotations.PathNotations.
+
+Notation "a == b" := (paths a b) (at level 70, no associativity).
+Notation "! p " := (pathsinv0 p) (at level 50).
+Notation "p @ q" := (pathscomp0 p q) (at level 60, right associativity).
+
 
 
 (** * Paths in total spaces are equivalent to pairs of paths *)

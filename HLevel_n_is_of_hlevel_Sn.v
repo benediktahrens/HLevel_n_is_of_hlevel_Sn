@@ -1,11 +1,9 @@
-Add Rec LoadPath "../Generalities".
-Add Rec LoadPath "../hlevel1".
-Add Rec LoadPath "../hlevel2".
-Add Rec LoadPath "../Proof_of_Extensionality".
 
-Require Import basic_lemmas_which_should_be_in_uu0.
 
-(*Require Import hSet.*)
+(** ** Ahrens, Kapulkin,  December 2012 *)
+
+
+Require Import auxiliary_lemmas.
 Require Import hProp.
 Require Import funextfun.
 
@@ -195,98 +193,3 @@ Proof.
                                       (isapropisofhlevel _ _))).
 Defined.
   
-
-(*
-
-
-Section blah.
-
-Variable P : UU -> hProp.
-
-Variables X X' : UU.
-Variables (pX : P X) (pX' : P X').
-
-Definition Id_prop_to_Id : ((tpair _ X pX) == (tpair (fun x => P x) X' pX')) -> 
-    (X == X') := base_paths _ _ .
-
-Lemma Id_to_Id_prop : (X == X') -> 
-     ((tpair _ X pX) == (tpair (fun x => P x) X' pX')).
-Proof.
-  intro H.
-  apply (total2_paths2_UU H).
-  apply proofirrelevance.
-  apply (pr2 (P X')).
-Defined.
-
-Lemma isweq_Id_prop_to_Id : isweq Id_prop_to_Id.
-Proof.
-  apply (gradth _ Id_to_Id_prop).
-  Focus 2.
-    intro H.
-    unfold Id_prop_to_Id.
-    unfold Id_to_Id_prop. simpl.
-    generalize dependent pX'.
-    clear pX'.
-    generalize dependent pX.
-    clear pX.
-    elim H.
-    intros pX pX'.
-    simpl. About pathscomp0.
-    apply (pathscomp0 (b:=base_paths {| pr1 := X; pr2 := pX |} {| pr1 := X; pr2 := pX' |}
-  (total2_paths2_UU (idpath X)
-     (proofirrelevance (P X) (pr2 (P X))
-        (pX) pX')))).
-        
-     Focus 2.
-     
-    rewrite transportfidpath.
-    apply idpath.
-    
-    induction H.
-  intro H.
-    unfold Id_to_Id_prop. simpl.
-  unfold Id_prop_to_Id. simpl.
-  apply 
-  
-  elim H.
-  simpl.
-  
-
-
-
-Proof.
-  intros H.
-  apply (base_paths _ _ H).
-Defined.
-
-Lemma bla : weq ((tpair _ X pX) == (tpair (fun x => P x) X' pX')) (X == X').
-Proof.
-  
-
-
-End blah.
-
-Definition hlevelType n : UU := (total2 (fun X => isofhlevel n X)).
-
-Lemma hlevel_of_hlevels : forall n,
-   isofhlevel (S n) (hlevelType n).
-Proof.
-  simpl.
-  intros n X X'.
-  Check (hlevelType n).
-  Check (total2 (fun X : UU => isofhlevel n X)).
-  destruct X as [X p].
-  destruct X' as [X' p'].
-  set (H:=isofhlevelweqb n (univalenceweq X X')).
-  Check 
-  destruct X as [X isofnX].
-  destruct X' as [X' isofnX'].
-  apply isofhleveltotal2.
-  simpl.
-  apply (isofhlevelweqf (univalenceweq (pr1 X) X')).
-  
-  
-  Focus 2.
-  
-  apply isofhleveltotal2.
-*)
