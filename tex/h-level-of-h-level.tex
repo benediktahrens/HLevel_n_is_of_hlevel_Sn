@@ -1,0 +1,141 @@
+\documentclass[11pt]{amsart}
+
+%% Input handling:
+\usepackage[utf8]{inputenc}  % to allow unicode in source
+
+%% AMS and other general math packages:
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage{mathtools} % for \mathclap, used to center extra-wide diagrams.
+
+%% General style packages:
+\usepackage{xcolor}
+\definecolor{darkgreen}{rgb}{0,0.45,0}
+\definecolor{darkred}{rgb}{0.75,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.6}
+\usepackage[colorlinks,citecolor=darkgreen,linkcolor=darkred,urlcolor=darkblue]{hyperref}
+\usepackage{breakurl}
+%\usepackage{mathpazo}
+\usepackage{enumerate} % for customising enumerated lists
+
+%% For syntax of type theory:
+% \usepackage{mathpartir}
+
+%% Graphics and diagrams packages:
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage[all]{xy}
+\xyoption{2cell}
+\xyoption{curve}
+\UseTwocells
+% \input{diagxy}  % for better inline arrows
+% \input{xy-in-tikz} % for arrow tips in TikZ matching xypic�s style
+% \tikzset{>=xyto}
+\pgfarrowsdeclarealias{c}{c}{right hook}{left hook}
+\pgfarrowsdeclarealias{c'}{c'}{left hook}{right hook}
+
+\newbox\pbbox
+\setbox\pbbox=\hbox{\xy \POS(65,0)\ar@{-} (0,0) \ar@{-} (65,65)\endxy}
+\def\pb{\save[]+<3.5mm,-3.5mm>*{\copy\pbbox} \restore}
+% A pullback marker for xymatrix diagrams.
+% Usage: add �\pb� in the matrix node of the pullback object, as for instance:
+% \xymatrix{ A \ar[r] \ar[d] \pb & B \ar[d] \\ C \ar[r] & D}
+%
+% To adjust placement in individual diagrams, instead of �\pb� include the
+% code following �\def\pb�, and play around with the positioning �<3mm,-3mm>�.
+
+%% Theorem environment declarations (using amsthm):
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem*{theoremstar}{Theorem}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{convention}[theorem]{Convention}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{examples}[theorem]{Examples}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{idea}[theorem]{Idea}
+
+% Type-theoretic:
+\newcommand{\Eq}{\mathsf{Eq}}
+\newcommand{\HLevel}{\mathsf{HLevel}}
+\newcommand{\hProp}{\mathsf{hProp}}
+\newcommand{\Id}{\mathsf{Id}}
+\newcommand{\isofhlevel}{\mathsf{isofhlevel}}
+\newcommand{\Nat}{\mathsf{Nat}}
+\newcommand{\sfPi}{\mathsf{\Pi}}
+\newcommand{\sfSigma}{\mathsf{\Sigma}}
+\newcommand{\U}{\mathsf{U}}
+
+% Other:
+\newcommand{\oftype}{\! : \!}
+\newcommand*{\into}{\ensuremath{\lhook\joinrel\relbar\joinrel\rightarrow}}
+
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{0mm}{-0.5\baselineskip}{-1ex}{\bf}}
+\makeatother
+
+
+\begin{document}
+\title{H-Level $n$ is of h-level $n\mbox{+}1$}
+
+\author{Benedikt Ahrens}
+% \address[Benedikt Ahrens]{Institute for Advanced Study, Princeton}
+% \email{ahrens@ias.edu}
+
+\author{Chris Kapulkin}
+% \address[Chris Kapulkin]{Institute for Advanced Study, Princeton; and University of Pittsburgh}
+% \email{krk56@ias.edu}
+
+\date{December 3rd, 2012}
+\maketitle
+
+In this paper we prove that the type of types of h-level $n$ is itself of h-level $n+1$. That mirrors a familiar situation from higher category theory, where one has that the category of $n$-categories is itself an ($n\mbox{+}1$)-category.
+
+We fix a type-theoretic universe $\U$ closed under standard constructors. Define the type:
+ \[\HLevel(n) := \sfSigma_{X : \U} \ \isofhlevel \ n \ X \]
+
+\begin{theorem}\label{main_thm}
+ The type $\HLevel(n)$ is of h-level $n+1$.
+\end{theorem}
+
+\begin{lemma}\label{Id_of_Sigma}
+ Let $P \colon \U \to \hProp$ and let $(X, p), (X', p') \oftype \sfSigma_{X : \U} P(X)$. Then:
+ \[ \Id_{\sfSigma_{X : \U} P(X)} ((X, p), (X', p')) \simeq \Id_{\U} (X, X').\]
+\end{lemma}
+
+\begin{proof}
+ We have:
+ \begin{equation*}\begin{split}
+  \Id_{\sfSigma_{X : \U} P(X)} ((X, p), (X', p')) & \simeq \sfSigma_{z : \Id_{\U}(X, X')} \Id_{P(X')}(z_!p, p') \\
+  & \simeq \Id_{\U} (X, X')
+ \end{split}
+ \end{equation*}
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{main_thm}]
+ Let $(X, p), (X', p') \oftype \HLevel(n)$. We need to show that the type:
+ \[ \Id_{\sfSigma_{X : \U} \isofhlevel \ n \ X} ((X, p), (X', p')) \]
+ is of h-level $n$. Since for any natural number $n$ and any type $X$ the type:
+ \[\isofhlevel \ n \ X \]
+ is an hProp, we may apply Lemma \ref{Id_of_Sigma} with $P := \isofhlevel \ n$. In order to show that $\Id_{\U} (X, X')$ is of h-level $n$ we proceed as follows. By the Univalence Axiom, it suffices to show that that $\Eq(X, X')$ is of h-level $n$. We have an inclusion:
+ \[\Eq (X, X') \into X \rightarrow X'\]
+ i.e. a map of h-level $1$. Thus it suffices to show that $X \rightarrow X'$ is of h-level $n$. Since h-levels are preserved under $\sfPi$ and hence under the arrow type, this reduces to an assumption that $X'$ is of h-level $n$.
+\end{proof}
+
+\noindent
+Find the accompanying \textsf{Coq} code on
+\begin{center}
+\url{https://github.com/benediktahrens/HLevel_n_is_of_hlevel_Sn} .
+\end{center}
+
+\end{document} 
