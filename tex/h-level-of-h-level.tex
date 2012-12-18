@@ -8,13 +8,27 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amssymb}
-% \usepackage{mathtools} % for \mathclap, used to center extra-wide diagrams.
+\usepackage{mathtools} % for \mathclap, used to center extra-wide diagrams.
+
+%% For Coq code
+\usepackage{listings}
+\def\lstlanguagefiles{defManSSR.tex}
+\lstset{language=SSR}
+
 
 %% General style packages:
 \usepackage{xcolor}
 \definecolor{darkgreen}{rgb}{0,0.45,0}
 \definecolor{darkred}{rgb}{0.75,0,0}
 \definecolor{darkblue}{rgb}{0,0,0.6}
+
+\definecolor{dkviolet}{rgb}{0.6,0,0.8}
+\definecolor{dkblue}{rgb}{0,0.1,0.5}
+\definecolor{lightblue}{rgb}{0,0.5,0.5}
+\definecolor{dkgreen}{rgb}{0,0.4,0}
+\definecolor{dk2green}{rgb}{0.4,0,0}
+
+
 \usepackage[colorlinks,citecolor=darkgreen,linkcolor=darkred,urlcolor=darkblue]{hyperref}
 \usepackage{breakurl}
 %\usepackage{mathpazo}
@@ -31,7 +45,7 @@
 \xyoption{curve}
 \UseTwocells
 % \input{diagxy}  % for better inline arrows
-% \input{xy-in-tikz} % for arrow tips in TikZ matching xypic�s style
+% \input{xy-in-tikz} % for arrow tips in TikZ matching xypic’s style
 % \tikzset{>=xyto}
 \pgfarrowsdeclarealias{c}{c}{right hook}{left hook}
 \pgfarrowsdeclarealias{c'}{c'}{left hook}{right hook}
@@ -40,11 +54,11 @@
 \setbox\pbbox=\hbox{\xy \POS(65,0)\ar@{-} (0,0) \ar@{-} (65,65)\endxy}
 \def\pb{\save[]+<3.5mm,-3.5mm>*{\copy\pbbox} \restore}
 % A pullback marker for xymatrix diagrams.
-% Usage: add �\pb� in the matrix node of the pullback object, as for instance:
+% Usage: add “\pb” in the matrix node of the pullback object, as for instance:
 % \xymatrix{ A \ar[r] \ar[d] \pb & B \ar[d] \\ C \ar[r] & D}
 %
-% To adjust placement in individual diagrams, instead of �\pb� include the
-% code following �\def\pb�, and play around with the positioning �<3mm,-3mm>�.
+% To adjust placement in individual diagrams, instead of “\pb” include the
+% code following “\def\pb”, and play around with the positioning “<3mm,-3mm>”.
 
 %% Theorem environment declarations (using amsthm):
 \theoremstyle{plain}
@@ -72,8 +86,6 @@
 \newcommand{\Id}{\mathsf{Id}}
 \newcommand{\isofhlevel}{\mathsf{isofhlevel}}
 \newcommand{\Nat}{\mathsf{Nat}}
-\newcommand{\sfPi}{\mathsf{\Pi}}
-\newcommand{\sfSigma}{\mathsf{\Sigma}}
 \newcommand{\U}{\mathsf{U}}
 
 % Other:
@@ -89,53 +101,101 @@
 \title{H-Level $n$ is of h-level $n\mbox{+}1$}
 
 \author{Benedikt Ahrens}
-% \address[Benedikt Ahrens]{Institute for Advanced Study, Princeton}
-% \email{ahrens@ias.edu}
+%\address[Benedikt Ahrens]{Institute for Advanced Study, Princeton}
+%\email{ahrens@ias}
 
 \author{Chris Kapulkin}
-% \address[Chris Kapulkin]{Institute for Advanced Study, Princeton; and University of Pittsburgh}
-% \email{krk56@ias.edu}
+%\address[Chris Kapulkin]{Institute for Advanced Study, Princeton; and University of Pittsburgh}
+%\email{krk56@ias.edu}
 
-\date{December 3rd, 2012}
+\date{December 14th, 2012}
 \maketitle
 
-In this paper we prove that the type of types of h-level $n$ is itself of h-level $n+1$. That mirrors a familiar situation from higher category theory, where one has that the category of $n$-categories is itself an ($n\mbox{+}1$)-category.
+In (traditional) mathematics it is well-known that $n$-groupoids and their isomorphisms form an $(n\mbox{+}1)$-groupoid. Here, we prove an analogous theorem in Voevodsky's Univalent Foundations, namely, that the type of types of h-level $n$ is itself of h-level $n+1$.\footnote{We do not claim much originality: a proof of this result can be found in \cite[Section~8.7]{warren-pelayo:univalent-foundations-paper}.}
 
-We fix a type-theoretic universe $\U$ closed under standard constructors. Define the type:
- \[\HLevel(n) := \sfSigma_{X : \U} \ \isofhlevel \ n \ X \]
+We start by fixing a type-theoretic universe $\U$ closed under standard constructors (of importance to us are: $\prod$, $\sum$, $=$). Define the type
+ \[\HLevel(n) := \sum_{X : \U} \ \isofhlevel(n)(X). \]
+
+Our main theorem is:
 
 \begin{theorem}\label{main_thm}
  The type $\HLevel(n)$ is of h-level $n+1$.
 \end{theorem}
 
+Before proving the theorem, we state a helpful lemma.
+
 \begin{lemma}\label{Id_of_Sigma}
- Let $P \colon \U \to \hProp$ and let $(X, p), (X', p') \oftype \sfSigma_{X : \U} P(X)$. Then:
- \[ \Id_{\sfSigma_{X : \U} P(X)} ((X, p), (X', p')) \simeq \Id_{\U} (X, X').\]
+ Let $P \colon \U \to \hProp$ and let $(X, p), (X', p') \oftype \sum\limits_{X : \U} P(X)$. Then:
+ \[ \big( (X, p) =_{\sum\limits_{X : \U} P(X)} (X', p')\big) \simeq (X =_{\U} X').\]
 \end{lemma}
 
 \begin{proof}
  We have:
  \begin{equation*}\begin{split}
-  \Id_{\sfSigma_{X : \U} P(X)} ((X, p), (X', p')) & \simeq \sfSigma_{z : \Id_{\U}(X, X')} \Id_{P(X')}(z_!p, p') \\
-  & \simeq \Id_{\U} (X, X')
+ ((X, p) =_{\sum\limits_{X : \U} P(X)} (X', p')) & \simeq \sum_{z : X = X'} (z_!p =_{P(X')} p') \\
+  & \simeq (X =_{\U} X')
  \end{split}
  \end{equation*}
+ where the first equivalence follows from the fact that a path in a $\sum$-type corresponds to a pair of paths: one in the base type, and one in the fiber; and the second is an immediate consequence of $P(X')$ being an h-Prop.
 \end{proof}
+
+\begin{remark}
+ Note that from Lemma \ref{Id_of_Sigma} one can deduce what may be called {\em Univalence for propositions on the universe} i.e. for any $P \colon \U \to \hProp$ there is a weak equivalence:
+ \[ \Big( (X, p) =_{\sum\limits_{X : \U} P(X)} (X', p')\Big) \simeq \Eq (X, X'). \]
+\end{remark}
 
 \begin{proof}[Proof of Theorem \ref{main_thm}]
  Let $(X, p), (X', p') \oftype \HLevel(n)$. We need to show that the type:
- \[ \Id_{\sfSigma_{X : \U} \isofhlevel \ n \ X} ((X, p), (X', p')) \]
- is of h-level $n$. Since for any natural number $n$ and any type $X$ the type:
- \[\isofhlevel \ n \ X \]
- is an hProp, we may apply Lemma \ref{Id_of_Sigma} with $P := \isofhlevel \ n$. In order to show that $\Id_{\U} (X, X')$ is of h-level $n$ we proceed as follows. By the Univalence Axiom, it suffices to show that that $\Eq(X, X')$ is of h-level $n$. We have an inclusion:
- \[\Eq (X, X') \into X \rightarrow X'\]
- i.e. a map of h-level $1$. Thus it suffices to show that $X \rightarrow X'$ is of h-level $n$. Since h-levels are preserved under $\sfPi$ and hence under the arrow type, this reduces to an assumption that $X'$ is of h-level $n$.
+ \[(X, p) = (X', p') \]
+ is of h-level $n$. Since for any natural number $n$ and any type $X$ the type: $\isofhlevel(n)(X)$ is an h-Prop, we may apply Lemma \ref{Id_of_Sigma} with $P := \isofhlevel(n)$. By the Univalence Axiom, to show that $(X = X')$ is of h-level $n$, it suffices to show that that $\Eq(X, X')$ is of h-level $n$. We have an inclusion (a map of h-level $1$):
+ \[\Eq (X, X') \into (X \rightarrow X').\]
+ Thus it suffices to show that $X \rightarrow X'$ is of h-level $n$. Since h-levels are preserved under $\prod$ and hence under the arrow type, this reduces to an assumption that $X'$ is of h-level $n$.
 \end{proof}
 
-\noindent
-Find the accompanying \textsf{Coq} code on
+\paragraph*{About the formalization in Univalent Foundations}
+We have proved this result formally in the proof assistant \textsf{Coq}, based on V.\ Voevodsky's 
+library \textsf{Foundations} (TODO : insert reference with URL).
+In the following we present the formal equivalents to the above statements. 
+We write \lstinline!a == b! for $a = b$, and \lstinline!weq X Y! denotes the type of weak 
+equivalences from $X$ to $Y$. The total space associated to a fibration $B$ is denoted by 
+\lstinline!total2 (fun x => B x)!.
+
+Voevodsky's library \textsf{Foundations} provides many results we needed in order to prove the theorem. However, one important
+result was missing: given a fibration, the space of paths in its total space is equivalent to 
+  the space of pairs of paths in the base space and paths in the fiber:
+\begin{lstlisting}
+Theorem total_paths_equiv (B : UU -> hProp)(x y : total2 (fun x => B x)):
+  weq (x == y) 
+      (total2 (fun p : pr1 x == pr1 y => transportf _ p (pr2 x) == pr2 y )).
+\end{lstlisting}
+We imported this result from the library \textsf{HoTT} (TODO : insert reference with URL); see the file
+{\verb+auxiliary_lemmas_HoTT.v+} of our repository (TODO : insert reference with URL).
+
+In the file {\verb+HLevel_n_is_of_hlevel_Sn.v+} we prove the above statements.
+Lemma \ref{Id_of_Sigma} reads as
+\begin{lstlisting}
+Lemma Id_p_weq_Id (P : UU -> hProp)(X X' : UU)(pX : P X)(pX' : P X'): 
+  weq ((tpair _ X pX) == (tpair (fun x => P x) X' pX')) (X == X').
+\end{lstlisting}
+In the proof of the main theorem \ref{main_thm} we apply the preceding lemma in order to 
+reduce the goal to the following statement:
+\begin{lstlisting}
+Lemma isofhlevelpathspace : forall n : nat, forall X Y : UU,
+    isofhlevel n X -> isofhlevel n Y -> isofhlevel n (X == Y).
+\end{lstlisting}
+This statement is proved by distinguishing $n = 0$ and $n > 0$; in the library this is done in 
+two separate lemmas, called \lstinline!isofhlevel0pathspace! and \lstinline!isofhlevelSnpathspace!,
+respectively.
+
+Altogether, the two files comprise about 80 lines of specification and 150 lines of proof, 40 percent of which
+are used for the translation of \lstinline!total_paths_equiv! from the \textsf{HoTT} library to 
+\textsf{Foundations}.
+The proof (along with the necessary files from Voevodsky's Foundations repository) can be found at:
 \begin{center}
-\url{https://github.com/benediktahrens/HLevel_n_is_of_hlevel_Sn} .
+ \texttt{https://github.com/benediktahrens/HLevel\_n\_is\_of\_hlevel\_Sn}
 \end{center}
+
+\bibliographystyle{abbrvnat}
+\bibliography{references}
 
 \end{document} 
