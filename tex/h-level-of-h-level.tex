@@ -126,9 +126,13 @@
 \date{December 14th, 2012}
 \maketitle
 
-In (traditional) mathematics it is well-known that $n$-groupoids and their isomorphisms form an $(n\mbox{+}1)$-groupoid. Here, we prove an analogous theorem in Voevodsky's Univalent Foundations, namely, that the type of types of h-level $n$ is itself of h-level $n+1$.\footnote{We do not claim much originality: a proof of this result can be found in \cite[Section~8.7]{warren-pelayo:univalent-foundations-paper}.}
+In (traditional) mathematics it is well-known that $n$-groupoids and their isomorphisms form an $(n\mbox{+}1)$-groupoid. 
+Here, we prove an analogous theorem in Voevodsky's Univalent Foundations, namely, 
+that the type of types of h-level $n$ is itself of h-level $n+1$.\footnote{We do not claim much originality: 
+a proof of this result is given by \textcite[Section~8.7]{warren-pelayo:univalent-foundations-paper}.}
 
-\paragraph*{The result} We start by fixing a type-theoretic universe $\U$ closed under standard constructors (of importance to us are: $\prod$, $\sum$, $\Id$).
+\paragraph*{The result} We start by fixing a type-theoretic universe $\U$ closed under standard constructors 
+(of importance to us are: $\prod$, $\sum$, $\Id$).
 
 Define the type
  \[\HLevel(n) := \sum_{X : \U} \ \isofhlevel(n)(X). \]
@@ -166,9 +170,9 @@ Before proving the theorem, we give a lemma that can be seen as a version of the
 
 \paragraph*{About the formalization in Univalent Foundations}
 We proved this result formally in the proof assistant \textsf{Coq}, based on Voevodsky's
-library \textsf{Foundations} \cite{voevodsky:univalent-foundations-coq}.
+library \textsf{Foundations} \parencite{voevodsky:univalent-foundations-coq}.
 In the remainder of this note we present the formal equivalents to the above statements.
-We write \lstinline!a == b! for $\Id(a, b)$, and \lstinline!weq X Y! for $\Eq(X, Y)$. The type $\sum\limits_{x : A} B(x)$ is denoted by
+We write \lstinline!a == b! for $\Id(a, b)$, and \lstinline!weq X Y! for $\Eq(X, Y)$. The type $\sum_{x : A} B(x)$ is denoted by
 \lstinline!total2 (fun x => B x)!.
 
 Voevodsky's library \textsf{Foundations} provides many useful results needed in the proof. However, one important
@@ -178,8 +182,8 @@ Theorem total_paths_equiv (B : UU -> hProp)(x y : total2 (fun x => B x)):
   weq (x == y)
       (total2 (fun p : pr1 x == pr1 y => transportf _ p (pr2 x) == pr2 y )).
 \end{lstlisting}
-We imported this result from the library \textsf{HoTT} \cite{hott:repo}; see the file
-{\verb+auxiliary_lemmas_HoTT.v+} of our repository \cite{ahens-kapulkin:h-level-repo}.
+We imported this result from the library \textsf{HoTT} \parencite{hott:repo}; see the file
+{\verb+auxiliary_lemmas_HoTT.v+} of our repository \parencite{ahrens-kapulkin:h-level-repo}.
 
 In the file {\verb+HLevel_n_is_of_hlevel_Sn.v+} we prove the above statements.
 Lemma \ref{Id_of_Sigma} reads as
