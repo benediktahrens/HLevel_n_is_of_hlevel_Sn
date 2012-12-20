@@ -1,7 +1,11 @@
-\documentclass[11pt]{amsart}
+\documentclass[11pt]{scrartcl}
 
 %% Input handling:
 \usepackage[utf8]{inputenc}  % to allow unicode in source
+
+%%  KOMA SCRIPT font settings
+\setkomafont{title}{\rmfamily\bfseries}
+\setkomafont{section}{\rmfamily\bfseries\Large}
 
 %% AMS and other general math packages:
 \usepackage{amsthm}
@@ -98,15 +102,24 @@
 \renewcommand{\paragraph}{\@startsection{paragraph}{4}{0mm}{-0.5\baselineskip}{-1ex}{\bf}}
 \makeatother
 
+\usepackage[style=authoryear,
+  maxnames=2,
+ %  maxbibnames=99                  %%%%%%%%     
+  uniquename=init
+ ]{biblatex}
+ \bibliography{references.bib}
+
+
+\usepackage{hyperref}
 
 \begin{document}
-\title{H-Level $n$ is of h-level $n\mbox{+}1$}
+\title{H-Level($n$) is of h-level $n + 1$}
 
-\author{Benedikt Ahrens}
+\author{Benedikt Ahrens \and Chris Kapulkin}
 %\address[Benedikt Ahrens]{Institute for Advanced Study, Princeton}
 %\email{ahrens@ias}
 
-\author{Chris Kapulkin}
+%\author{Chris Kapulkin}
 %\address[Chris Kapulkin]{Institute for Advanced Study, Princeton; and University of Pittsburgh}
 %\email{krk56@ias.edu}
 
@@ -115,89 +128,84 @@
 
 In (traditional) mathematics it is well-known that $n$-groupoids and their isomorphisms form an $(n\mbox{+}1)$-groupoid. Here, we prove an analogous theorem in Voevodsky's Univalent Foundations, namely, that the type of types of h-level $n$ is itself of h-level $n+1$.\footnote{We do not claim much originality: a proof of this result can be found in \cite[Section~8.7]{warren-pelayo:univalent-foundations-paper}.}
 
-We start by fixing a type-theoretic universe $\U$ closed under standard constructors (of importance to us are: $\prod$, $\sum$, $=$). Define the type
+\paragraph*{The result} We start by fixing a type-theoretic universe $\U$ closed under standard constructors (of importance to us are: $\prod$, $\sum$, $\Id$).
+
+Define the type
  \[\HLevel(n) := \sum_{X : \U} \ \isofhlevel(n)(X). \]
 
-Our main theorem is:
+Our theorem is:
 
 \begin{theorem}\label{main_thm}
  The type $\HLevel(n)$ is of h-level $n+1$.
 \end{theorem}
 
-Before proving the theorem, we state a helpful lemma.
+Before proving the theorem, we give a lemma that can be seen as a version of the Univalence Axiom for predicates on the universe.
 
 \begin{lemma}\label{Id_of_Sigma}
  Let $P \colon \U \to \hProp$ and let $(X, p), (X', p') \oftype \sum\limits_{X : \U} P(X)$. Then:
- \[ \big( (X, p) =_{\sum\limits_{X : \U} P(X)} (X', p')\big) \simeq (X =_{\U} X').\]
+ \[ \Id_{\sum\limits_{X : \U}P(X)} \big( (X, p), (X', p') \big) \simeq \Eq (X, X'),\]
+ where $\Eq (X, X')$ denotes the type of weak equivalences from $X$ to $X'$.
 \end{lemma}
 
 \begin{proof}
  We have:
  \begin{equation*}\begin{split}
- ((X, p) =_{\sum\limits_{X : \U} P(X)} (X', p')) & \simeq \sum_{z : X = X'} (z_!p =_{P(X')} p') \\
-  & \simeq (X =_{\U} X')
+ \Id_{\sum\limits_{X : \U} P(X)} \big( (X, p), (X', p')\big) & \simeq \sum_{z : \Id_{\U} (X, X')} \Id_{P(X')} (z_!p, p') \\
+  & \simeq \Id_{\U} (X, X') \\
+  & \simeq \Eq (X, X'),
  \end{split}
  \end{equation*}
- where the first equivalence follows from the fact that a path in a $\sum$-type corresponds to a pair of paths: one in the base type, and one in the fiber; and the second is an immediate consequence of $P(X')$ being an h-Prop.
+ where the first equivalence follows from the fact that a path in a $\sum$-type corresponds to a pair of paths: one in the base type, and one in the fiber; the second is an immediate consequence of $P(X')$ being an h-Prop; and the third is an application of the Univalence Axiom.
 \end{proof}
 
-\begin{remark}
- Note that from Lemma \ref{Id_of_Sigma} one can deduce what may be called {\em Univalence for propositions on the universe} i.e. for any $P \colon \U \to \hProp$ there is a weak equivalence:
- \[ \Big( (X, p) =_{\sum\limits_{X : \U} P(X)} (X', p')\Big) \simeq \Eq (X, X'). \]
-\end{remark}
-
 \begin{proof}[Proof of Theorem \ref{main_thm}]
- Let $(X, p), (X', p') \oftype \HLevel(n)$. We need to show that the type:
- \[(X, p) = (X', p') \]
- is of h-level $n$. Since for any natural number $n$ and any type $X$ the type: $\isofhlevel(n)(X)$ is an h-Prop, we may apply Lemma \ref{Id_of_Sigma} with $P := \isofhlevel(n)$. By the Univalence Axiom, to show that $(X = X')$ is of h-level $n$, it suffices to show that that $\Eq(X, X')$ is of h-level $n$. We have an inclusion (a map of h-level $1$):
+ Let $(X, p), (X', p') \oftype \HLevel(n)$. We need to show that the type $\Id \big( (X, p), (X', p')\big)$ is of h-level $n$. Since for any natural number $n$ and any type $X$ the type: $\isofhlevel(n)(X)$ is an h-Prop, we may apply Lemma \ref{Id_of_Sigma} with $P := \isofhlevel(n)$. Next we observe that it suffices to show that $X \rightarrow X'$ is of h-level $n$ because the projection:
  \[\Eq (X, X') \into (X \rightarrow X').\]
- Thus it suffices to show that $X \rightarrow X'$ is of h-level $n$. Since h-levels are preserved under $\prod$ and hence under the arrow type, this reduces to an assumption that $X'$ is of h-level $n$.
+ is an inclusion (i.e. a map of h-level $1$). Since h-levels are preserved under $\prod$ and hence under the arrow type, this reduces to an assumption that $X'$ is of h-level $n$.
 \end{proof}
 
 \paragraph*{About the formalization in Univalent Foundations}
-We have proved this result formally in the proof assistant \textsf{Coq}, based on V.\ Voevodsky's 
-library \textsf{Foundations} (TODO : insert reference with URL).
-In the following we present the formal equivalents to the above statements. 
-We write \lstinline!a == b! for $a = b$, and \lstinline!weq X Y! denotes the type of weak 
-equivalences from $X$ to $Y$. The total space associated to a fibration $B$ is denoted by 
+We proved this result formally in the proof assistant \textsf{Coq}, based on Voevodsky's
+library \textsf{Foundations} \cite{voevodsky:univalent-foundations-coq}.
+In the remainder of this note we present the formal equivalents to the above statements.
+We write \lstinline!a == b! for $\Id(a, b)$, and \lstinline!weq X Y! for $\Eq(X, Y)$. The type $\sum\limits_{x : A} B(x)$ is denoted by
 \lstinline!total2 (fun x => B x)!.
 
-Voevodsky's library \textsf{Foundations} provides many results we needed in order to prove the theorem. However, one important
-result was missing: given a fibration, the space of paths in its total space is equivalent to 
-  the space of pairs of paths in the base space and paths in the fiber:
+Voevodsky's library \textsf{Foundations} provides many useful results needed in the proof. However, one important
+result was missing: a path in the $\sum$-type is equivalent to a pair of paths consisting of a path in the base and a path in the fiber:
 \begin{lstlisting}
 Theorem total_paths_equiv (B : UU -> hProp)(x y : total2 (fun x => B x)):
-  weq (x == y) 
+  weq (x == y)
       (total2 (fun p : pr1 x == pr1 y => transportf _ p (pr2 x) == pr2 y )).
 \end{lstlisting}
-We imported this result from the library \textsf{HoTT} (TODO : insert reference with URL); see the file
-{\verb+auxiliary_lemmas_HoTT.v+} of our repository (TODO : insert reference with URL).
+We imported this result from the library \textsf{HoTT} \cite{hott:repo}; see the file
+{\verb+auxiliary_lemmas_HoTT.v+} of our repository \cite{ahens-kapulkin:h-level-repo}.
 
 In the file {\verb+HLevel_n_is_of_hlevel_Sn.v+} we prove the above statements.
 Lemma \ref{Id_of_Sigma} reads as
 \begin{lstlisting}
-Lemma Id_p_weq_Id (P : UU -> hProp)(X X' : UU)(pX : P X)(pX' : P X'): 
+Lemma Id_p_weq_Id (P : UU -> hProp)(X X' : UU)(pX : P X)(pX' : P X'):
   weq ((tpair _ X pX) == (tpair (fun x => P x) X' pX')) (X == X').
 \end{lstlisting}
-In the proof of the main theorem \ref{main_thm} we apply the preceding lemma in order to 
+In the proof of the main theorem \ref{main_thm} we apply the preceding lemma in order to
 reduce the goal to the following statement:
 \begin{lstlisting}
 Lemma isofhlevelpathspace : forall n : nat, forall X Y : UU,
     isofhlevel n X -> isofhlevel n Y -> isofhlevel n (X == Y).
 \end{lstlisting}
-This statement is proved by distinguishing $n = 0$ and $n > 0$; in the library this is done in 
+This statement is proved by distinguishing two cases $n = 0$ and $n > 0$; in the library this is done in
 two separate lemmas, called \lstinline!isofhlevel0pathspace! and \lstinline!isofhlevelSnpathspace!,
 respectively.
 
-Altogether, the two files comprise about 80 lines of specification and 150 lines of proof, 40 percent of which
-are used for the translation of \lstinline!total_paths_equiv! from the \textsf{HoTT} library to 
+Altogether, the two files comprise about 80 lines of specification and 150 lines of proof, 40\% of which
+are used for the translation of \lstinline!total_paths_equiv! from the \textsf{HoTT} library to
 \textsf{Foundations}.
 Our \textsf{Coq} files (along with the necessary files from Voevodsky's \textsf{Foundations} repository) can be found at
 \begin{center}
  \url{https://github.com/benediktahrens/HLevel_n_is_of_hlevel_Sn}
 \end{center}
 
-\bibliographystyle{abbrvnat}
-\bibliography{references}
+% \bibliographystyle{alpha}
+\printbibliography
 
 \end{document} 
